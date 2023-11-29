@@ -16,6 +16,24 @@ export class UsersRoutes extends CommonRoutesConfig {
   }
 
   configureRoutes() {
+
+    // Sign in with email and password
+    this.app.route("/login/:email/:password")
+      .get((req: express.Request, res: express.Response) => {
+        let email = req.params.email;
+        let password = req.params.password;
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            var user = userCredential.user;
+            res.status(201).send(user);
+          })
+          .catch((error) => {
+            res.status(500).send(error);
+          });
+      });
+
+    // Create user with email and password
     this.app.route("/register/:email/:password")
       .post((req: express.Request, res: express.Response) => {
         let email = req.params.email;
