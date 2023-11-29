@@ -16,6 +16,15 @@ export class UsersRoutes extends CommonRoutesConfig {
   }
 
   configureRoutes() {
+    // Sign out
+    this.app.route("/logout/")
+      .get((req: express.Request, res: express.Response) => {
+        firebase.auth().signOut().then(() => {
+          res.status(200).send("Sign-out successful");
+        }).catch((error) => {
+          res.status(500).send(error);
+        });
+      });
 
     // Sign in with email and password
     this.app.route("/login/:email/:password")
