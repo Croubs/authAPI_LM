@@ -16,6 +16,22 @@ export class UsersRoutes extends CommonRoutesConfig {
   }
 
   configureRoutes() {
+    // Delete account
+    this.app.route("/delete/")
+      .delete((req:express.Request, res: express.Response) => {
+        const user = firebase.auth().currentUser;
+
+        if (user) {
+          user.delete().then(() => {
+            res.status(200).send("User deleted");
+          }).catch((error) => {
+            res.status(500).send(error);
+          });
+        } else {
+          res.status(409).send("The user couldn't be found")
+        }
+      })
+
     // Sign out
     this.app.route("/logout/")
       .get((req: express.Request, res: express.Response) => {
