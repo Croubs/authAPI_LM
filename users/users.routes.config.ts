@@ -16,6 +16,29 @@ export class UsersRoutes extends CommonRoutesConfig {
   }
 
   configureRoutes() {
+    // Get user info
+    this.app.route("/getCurrentUser/")
+      .get((req: express.Request, res: express.Response) => {
+        const user = firebase.auth().currentUser;
+        let currentUser;
+
+        if (user !== null) {
+          user.providerData.forEach((profile) => {
+            currentUser = {
+              "uid": profile?.uid,
+              "name": profile?.displayName,
+              "email": profile?.email,
+              "photoURL": profile?.photoURL
+            }
+            
+            res.status(200).send(currentUser);
+          });
+        } else {
+          res.status(409).send("The user couldn't be found");
+        }
+
+      });
+
     // Get user status
     this.app.route("/isSignedIn/")
       .get((req: express.Request, res: express.Response) => {
@@ -29,7 +52,7 @@ export class UsersRoutes extends CommonRoutesConfig {
 
     // Delete account
     this.app.route("/delete/")
-      .delete((req:express.Request, res: express.Response) => {
+      .delete((req: express.Request, res: express.Response) => {
         const user = firebase.auth().currentUser;
 
         if (user) {
@@ -39,7 +62,7 @@ export class UsersRoutes extends CommonRoutesConfig {
             res.status(500).send(error);
           });
         } else {
-          res.status(409).send("The user couldn't be found")
+          res.status(409).send("The user couldn't be found");
         }
       })
 
@@ -61,7 +84,7 @@ export class UsersRoutes extends CommonRoutesConfig {
 
         firebase.auth().signInWithEmailAndPassword(email, password)
           .then((userCredential) => {
-            var user = userCredential.user;
+            let user = userCredential.user;
             res.status(201).send(user);
           })
           .catch((error) => {
@@ -79,7 +102,7 @@ export class UsersRoutes extends CommonRoutesConfig {
           .auth()
           .createUserWithEmailAndPassword(email, password)
           .then((userCredential) => {
-            var user = userCredential.user;
+            let user = userCredential.user;
             res.status(201).send(user);
           })
           .catch((error) => {
