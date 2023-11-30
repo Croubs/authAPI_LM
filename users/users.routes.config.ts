@@ -16,6 +16,17 @@ export class UsersRoutes extends CommonRoutesConfig {
   }
 
   configureRoutes() {
+    // Get user status
+    this.app.route("/isSignedIn/")
+      .get((req: express.Request, res: express.Response) => {
+        const user = firebase.auth().currentUser;
+
+        if (user == null)
+          res.status(200).send(false)
+        else
+          res.status(200).send(true);
+      });
+
     // Delete account
     this.app.route("/delete/")
       .delete((req:express.Request, res: express.Response) => {
